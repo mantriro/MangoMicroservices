@@ -17,8 +17,8 @@ namespace Mango.Web.Service
 			_httpClientFactory = httpClientFactory;
 		}
 
-		public async Task<ResponseDto?> SendAsync(RequestDto? requestDto, ApiType apiType)
-		{
+		public async Task<ResponseDto?> SendAsync(RequestDto? requestDto)
+	{
 			try
 			{
 				HttpClient clent = _httpClientFactory.CreateClient("MangoAPI");

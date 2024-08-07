@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Mango.Services.CouponAPI.Controllers
 {
-	[Route("api/[Controller]")]
+	[Route("api/coupon")]
 	[ApiController]
 	public class CouponAPIController : Controller
 	{
@@ -28,11 +28,11 @@ namespace Mango.Services.CouponAPI.Controllers
 				_response.Result = _mapper.Map<IEnumerable<Coupon>>(objList);
 				return _response;
 			}
-			catch (Exception ex) 
+			catch (Exception ex)
 			{
 				_response.Success = false;
 				_response.Message = ex.Message;
-				
+
 			}
 			return null;
 		}
@@ -86,7 +86,7 @@ namespace Mango.Services.CouponAPI.Controllers
 				_db.Coupons.Add(obj);
 				_db.SaveChanges();
 
-				_response.Result= _mapper.Map<CouponDto>(obj); // map obj to response
+				_response.Result = _mapper.Map<CouponDto>(obj); // map obj to response
 			}
 			catch (Exception ex)
 			{
@@ -117,6 +117,7 @@ namespace Mango.Services.CouponAPI.Controllers
 		}
 
 		[HttpDelete]
+		[Route("{id:int}")]
 		public ResponseDto Delete(int id)
 		{
 			try
