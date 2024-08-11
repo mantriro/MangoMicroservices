@@ -1,5 +1,4 @@
-﻿//using Mango.Services.CouponAPI.Models;
-using Mango.Service.AuthAPI.Models;
+﻿using Mango.Service.AuthAPI.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
