@@ -59,7 +59,7 @@ namespace Mango.Services.ProductAPI.Controllers
         }
 
         [HttpGet]
-        [Route("GetByName/{code}")]
+        [Route("GetByName/{name}")]
         public ResponseDto GetByName(string name)
         {
             try
