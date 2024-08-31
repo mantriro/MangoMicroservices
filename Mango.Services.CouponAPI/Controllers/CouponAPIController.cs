@@ -9,7 +9,7 @@ namespace Mango.Services.CouponAPI.Controllers
 {
 	[Route("api/coupon")]
 	[ApiController]
-	[Authorize]
+	//[Authorize]
 	public class CouponAPIController : Controller
 	{
 		private readonly AppDbContext _db;
