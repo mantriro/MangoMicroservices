@@ -9,6 +9,7 @@ using Mango.Web.Utility;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using Mango.MessageBus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,14 +27,16 @@ IMapper mapper = MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper);
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
-builder.Services.AddScoped<IProductService, ProductService>();
 
+builder.Services.AddScoped<ICouponService, CouponService>();
+
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IMessageBus, MessageBus>();
 builder.Services.AddScoped<BackendApiAuthenticationHttpClientHandler>();
 
 builder.Services.AddHttpClient("Product", u=>u.BaseAddress= 
     new Uri(builder.Configuration["ServiceUrls:ProductAPI"])).AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>();
 
-builder.Services.AddScoped<ICouponService, CouponService>();
 builder.Services.AddHttpClient("Coupon", u => u.BaseAddress =
     new Uri(builder.Configuration["ServiceUrls:CouponAPI"])).AddHttpMessageHandler<BackendApiAuthenticationHttpClientHandler>();
 
