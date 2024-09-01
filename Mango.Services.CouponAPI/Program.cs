@@ -19,6 +19,7 @@ builder.Services.AddDbContext<AppDbContext>(option =>
 SD.CouponAPIBase = builder.Configuration["ServiceUrls:CouponAPI"];
 IMapper mapper= MappingConfig.RegisterMaps().CreateMapper();
 builder.Services.AddSingleton(mapper);
+
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddControllers();

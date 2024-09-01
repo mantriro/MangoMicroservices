@@ -58,9 +58,36 @@ namespace Mango.Web.Service
 						break;
 				}
 
+				try { 
 				apiResponse = await clent.SendAsync(message);
+                    //if (!apiResponse.IsSuccessStatusCode)   VERY HANDY FOR VERBOSE ERRORS
+                    //{
+                    //    // Log the status code and reason phrase
+                    //    Console.WriteLine($"Status Code: {(int)apiResponse.StatusCode} ({apiResponse.StatusCode})");
+                    //    Console.WriteLine($"Reason Phrase: {apiResponse.ReasonPhrase}");
 
-				switch (apiResponse.StatusCode)
+                    //    // Log the response content for more details
+                    //    string errorContent = await apiResponse.Content.ReadAsStringAsync();
+                    //    Console.WriteLine("Error Content:");
+                    //    Console.WriteLine(errorContent);
+                    //}
+                    //else
+                    //{
+                    //    // If successful, process the response content
+                    //    string responseBody = await apiResponse.Content.ReadAsStringAsync();
+                    //    Console.WriteLine("Response received successfully:");
+                    //    Console.WriteLine(responseBody);
+                    //}
+                }
+                catch (HttpRequestException e)
+                {
+                    Console.WriteLine($"Request Exception: {e.Message}");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine($"Unexpected Exception: {e.Message}");
+                }
+                switch (apiResponse.StatusCode)
 				{
 
 					case HttpStatusCode.NotFound:
