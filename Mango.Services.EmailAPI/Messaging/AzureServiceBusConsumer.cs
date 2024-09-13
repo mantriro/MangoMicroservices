@@ -17,21 +17,36 @@ namespace Mango.Services.EmailAPI.Messaging
         public AzureServiceBusConsumer(IConfiguration configuration)
         {
             _configuration = configuration;
-            serviceBusConnectionString = _configuration.GetValue<string>("ServiceBusConnectionString");
+            serviceBusConnectionString = _configuration.GetValue<string>("ServiceBusConnectionStrings");
         
-            serviceBusConnectionString = _configuration.GetValue<string>("ServiceBusConnectionString");
+            serviceBusConnectionString = _configuration.GetValue<string>("ServiceBusConnectionStrings");
             emailCartQueue = _configuration.GetValue<string>("TopicAndQueueNames:EmailShoppingCartQueue");
-
+            var options = new ServiceBusProcessorOptions
+            {
+                AutoCompleteMessages = false,   // Manually complete messages
+                MaxConcurrentCalls = 1          // Process messages one at a time for debugging
+            };
             var client = new ServiceBusClient(serviceBusConnectionString);
-            _emailCartProcessor = client.CreateProcessor(emailCartQueue);
+            _emailCartProcessor = client.CreateProcessor(emailCartQueue, options);
 
         }
 
         public async Task Start()
         {
-            _emailCartProcessor.ProcessMessageAsync += OnEmailCartRequestReceived;
+            Console.WriteLine("Starting processor email cart req received...");
+            try
+            {
+                _emailCartProcessor.ProcessMessageAsync += OnEmailCartRequestReceived;
+            }
+            catch (Exception ex) {
+                throw;
+            }
+            Console.WriteLine("started processor...");
+
             _emailCartProcessor.ProcessErrorAsync += ErrorHandler;
+            Console.WriteLine("started error handler...");
             await _emailCartProcessor.StartProcessingAsync();
+            Console.WriteLine("Message processing started...");
         }
 
         private  Task ErrorHandler(ProcessErrorEventArgs args)
@@ -64,3 +79,29 @@ namespace Mango.Services.EmailAPI.Messaging
         }
     }
 }
+//
+////OnEmailCartRequestReceived;
+//async args =>
+//                {
+//    var message = args.Message;
+//    Console.WriteLine("test1");
+
+//    Console.WriteLine(args.Message);
+
+//    var body = Encoding.UTF8.GetString(message.Body);
+
+//    CartDto objMessage = JsonConvert.DeserializeObject<CartDto>(body);
+
+//    try
+//    {
+//        Console.WriteLine(args.Message);
+
+//        //TODO try to log email.
+//        await args.CompleteMessageAsync(args.Message);
+//    }
+//    catch (Exception ex)
+//    {
+//        throw;
+//    }
+
+//};

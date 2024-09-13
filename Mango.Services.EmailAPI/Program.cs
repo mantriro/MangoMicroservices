@@ -33,8 +33,9 @@ app.UseAuthorization();
 
 app.MapControllers();
 ApplyMigration();
-app.Run();
 app.UseAzureServiceBusConsumer();
+
+app.Run();
 void ApplyMigration()
 {
     using (var scope = app.Services.CreateScope())

@@ -13,7 +13,7 @@ namespace Mango.Services.EmailAPI.Extension
             var hostApplicationLife = app.ApplicationServices.GetService<IHostApplicationLifetime>();
 
             hostApplicationLife.ApplicationStarted.Register(OnStart);
-            hostApplicationLife.ApplicationStarted.Register(OnStop);
+            hostApplicationLife.ApplicationStopping.Register(OnStop);
 
             return app;
         }
