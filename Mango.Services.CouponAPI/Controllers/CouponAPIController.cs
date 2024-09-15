@@ -9,7 +9,7 @@ namespace Mango.Services.CouponAPI.Controllers
 {
 	[Route("api/coupon")]
 	[ApiController]
-	[Authorize]
+	//[Authorize]
 	public class CouponAPIController : Controller
 	{
 		private readonly AppDbContext _db;
@@ -89,7 +89,19 @@ namespace Mango.Services.CouponAPI.Controllers
 				_db.Coupons.Add(obj);
 				_db.SaveChanges();
 
-				_response.Result = _mapper.Map<CouponDto>(obj); // map obj to response
+                //StripeConfiguration.ApiKey = "sk_test_51Pz8PxGcIDwsr3gImbx5M2w4TABOcPN9lOrIUoQXiVZPCxDSYpZBwAQXMQij36prOVdcqihRw3jfNLkbpcA4UWJA00mnWMQTqY";
+
+                var options = new Stripe.CouponCreateOptions
+                {
+                    Currency="usd",
+                    AmountOff = (long)(couponDto.DiscountAmount*100),
+					Name=couponDto.CouponCode,
+					Id= couponDto.CouponCode
+                };
+                var service = new Stripe.CouponService();
+                service.Create(options);
+
+                _response.Result = _mapper.Map<CouponDto>(obj); // map obj to response
 			}
 			catch (Exception ex)
 			{
@@ -132,7 +144,11 @@ namespace Mango.Services.CouponAPI.Controllers
 				Coupon obj = _db.Coupons.First(x=>x.CouponId==id); // convert dto to coupon
 				_db.Coupons.Remove(obj);
 				_db.SaveChanges();
-			}
+
+             
+                var service = new Stripe.CouponService();
+                service.Delete(obj.CouponCode);
+            }
 			catch (Exception ex)
 			{
 				_response.Success = false;

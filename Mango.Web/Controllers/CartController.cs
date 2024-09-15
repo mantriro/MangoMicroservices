@@ -1,6 +1,7 @@
 ﻿using Mango.Services.Web.Models.Dto;
 using Mango.Web.Models;
 using Mango.Web.Service.IService;
+using Mango.Web.Utility;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -66,6 +67,17 @@ namespace Mango.Web.Controllers
         [Authorize]
         public async Task<IActionResult> Confirmation(int orderId)
         {
+            ResponseDto? response = await _orderService.ValidateStripeSession(orderId);
+            if (response != null && response.Success)
+            {
+
+                OrderHeaderDto orderHeader = JsonConvert.DeserializeObject<OrderHeaderDto>(Convert.ToString(response.Result));
+                if (orderHeader.Status == SD.Status_Approved)
+                {
+                    return View(orderId);
+                }
+            }
+            //redirect to error page based on stripe status
             return View(orderId);
         }
         public async Task<IActionResult> Remove(int cartDetailsId)
