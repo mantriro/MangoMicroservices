@@ -60,25 +60,27 @@ namespace Mango.Web.Service
 
 				try { 
 				apiResponse = await clent.SendAsync(message);
-                    //if (!apiResponse.IsSuccessStatusCode)   VERY HANDY FOR VERBOSE ERRORS
-                    //{
-                    //    // Log the status code and reason phrase
-                    //    Console.WriteLine($"Status Code: {(int)apiResponse.StatusCode} ({apiResponse.StatusCode})");
-                    //    Console.WriteLine($"Reason Phrase: {apiResponse.ReasonPhrase}");
+					if (!apiResponse.IsSuccessStatusCode) //VERY HANDY FOR VERBOSE ERRORS
 
-                    //    // Log the response content for more details
-                    //    string errorContent = await apiResponse.Content.ReadAsStringAsync();
-                    //    Console.WriteLine("Error Content:");
-                    //    Console.WriteLine(errorContent);
-                    //}
-                    //else
-                    //{
-                    //    // If successful, process the response content
-                    //    string responseBody = await apiResponse.Content.ReadAsStringAsync();
-                    //    Console.WriteLine("Response received successfully:");
-                    //    Console.WriteLine(responseBody);
-                    //}
-                }
+					{
+						// Log the status code and reason phrase
+						Console.WriteLine($"Status Code: {(int)apiResponse.StatusCode} ({apiResponse.StatusCode})");
+						Console.WriteLine($"Reason Phrase: {apiResponse.ReasonPhrase}");
+
+						// Log the response content for more details
+						string errorContent = await apiResponse.Content.ReadAsStringAsync();
+						Console.WriteLine("Error Content:");
+						Console.WriteLine(errorContent);
+					}
+
+					else
+					{
+						// If successful, process the response content
+						string responseBody = await apiResponse.Content.ReadAsStringAsync();
+						Console.WriteLine("Response received successfully:");
+						Console.WriteLine(responseBody);
+					}
+				}
                 catch (HttpRequestException e)
                 {
                     Console.WriteLine($"Request Exception: {e.Message}");
