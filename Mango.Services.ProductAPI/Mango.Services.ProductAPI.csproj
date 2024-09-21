@@ -23,5 +23,8 @@
   <ItemGroup>
     <ProjectReference Include="..\Mango.Web\Mango.Web.csproj" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="wwwroot\ProductImages\" />
+  </ItemGroup>
 
 </Project>

@@ -82,15 +82,48 @@ namespace Mango.Services.ProductAPI.Controllers
 
         [HttpPost]
         [Authorize(Roles = "ADMIN")]
-        public ResponseDto Post([FromBody] ProductDto productDto)
+        public ResponseDto Post(ProductDto productDto)
         {
             try
             {
-                Product obj = _mapper.Map<Product>(productDto); // convert dto to coupon
-                _db.Products.Add(obj);
+                Product product = _mapper.Map<Product>(productDto); // convert dto to coupon
+                _db.Products.Add(product);
                 _db.SaveChanges();
 
-                _response.Result = _mapper.Map<ProductDto>(obj); // map obj to response
+                if (productDto.Image != null)
+                {
+
+                    if (!string.IsNullOrEmpty(product.ImageLocalPath))
+                    {
+                        var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), product.ImageLocalPath);
+                        FileInfo file = new FileInfo(oldFilePath);
+                        if (file.Exists)
+                        {
+                            file.Delete();
+                        }
+                        //_db.Products.Remove(product);
+                        //_db.SaveChanges();
+                    }
+
+                    string fileName = product.ProductId + Path.GetExtension(productDto.Image.FileName);
+                    string filePath = @"wwwroot\ProductImages\" + fileName;
+                    var filePathDirectory = Path.Combine(Directory.GetCurrentDirectory(), filePath);
+                    using (var fileStream = new FileStream(filePathDirectory, FileMode.Create))
+                    {
+                        productDto.Image.CopyTo(fileStream);
+                    }
+
+                    var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}{HttpContext.Request.PathBase.Value}";
+                    product.ImageUrl = baseUrl+ "/ProductImages/"+ fileName;
+                    product.ImageLocalPath = filePath;
+                }
+                else
+                {
+                    product.ImageUrl = "https://placehold.co/600x400";
+                }
+                _db.Products.Update(product);
+                _db.SaveChanges();
+                _response.Result = _mapper.Map<ProductDto>(product); // map obj to response
             }
             catch (Exception ex)
             {
@@ -103,15 +136,30 @@ namespace Mango.Services.ProductAPI.Controllers
         [HttpPut]
         [Authorize(Roles = "ADMIN")]
 
-        public ResponseDto Put([FromBody] ProductDto productDto)
+        public ResponseDto Put( ProductDto productDto)
         {
             try
             {
-                Product obj = _mapper.Map<Product>(productDto); // convert dto to coupon
-                _db.Products.Update(obj);
+                Product product = _mapper.Map<Product>(productDto); // convert dto to coupon
+                _db.Products.Update(product);
                 _db.SaveChanges();
+                if (productDto.Image != null)
+                {
+                    string fileName = product.ProductId + Path.GetExtension(productDto.Image.FileName);
+                    string filePath = @"wwwroot\ProductImages\" + fileName;
+                    var filePathDirectory = Path.Combine(Directory.GetCurrentDirectory(), filePath);
+                    using (var fileStream = new FileStream(filePathDirectory, FileMode.Create))
+                    {
+                        productDto.Image.CopyTo(fileStream);
+                    }
 
-                _response.Result = _mapper.Map<ProductDto>(obj); // map obj to response
+                    var baseUrl = $"{HttpContext.Request.Scheme}://{HttpContext.Request.Host.Value}{HttpContext.Request.PathBase.Value}";
+                    product.ImageUrl = baseUrl + "/ProductImages/" + fileName;
+                    product.ImageLocalPath = filePath;
+                }
+                _db.Products.Update(product);
+                _db.SaveChanges();
+                _response.Result = _mapper.Map<ProductDto>(product); // map obj to response
             }
             catch (Exception ex)
             {
@@ -130,8 +178,17 @@ namespace Mango.Services.ProductAPI.Controllers
             try
             {
                 Product obj = _db.Products.First(x => x.ProductId == id); // convert dto to coupon
-                _db.Products.Remove(obj);
-                _db.SaveChanges();
+                if (!string.IsNullOrEmpty(obj.ImageLocalPath))
+                {
+                    var oldFilePath = Path.Combine(Directory.GetCurrentDirectory(), obj.ImageLocalPath);
+                    FileInfo file = new FileInfo(oldFilePath);
+                    if (file.Exists)
+                    {
+                        file.Delete();
+                    }
+                    _db.Products.Remove(obj);
+                    _db.SaveChanges();
+                }
             }
             catch (Exception ex)
             {
